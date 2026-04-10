@@ -6,644 +6,103 @@
 <title>Guitar Modeling for CNC — 3D Files for Luthiers</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,600;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --black: #0a0a0a;
-    --dark: #111111;
-    --panel: #161616;
-    --border: #2a2a2a;
-    --gold: #c8a84b;
-    --gold-dim: #7a6330;
-    --amber: #e8b84b;
-    --white: #f0ede8;
-    --muted: #6a6560;
-    --wood: #3d2b1f;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 300;
-    overflow-x: hidden;
-  }
-
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    padding: 0 6vw;
-    border-bottom: 1px solid var(--border);
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(200,168,75,0.06) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 80% at 20% 80%, rgba(61,43,31,0.4) 0%, transparent 60%);
-  }
-
-  .hero-lines {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 55%;
-    height: 100%;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 39px,
-      rgba(200,168,75,0.04) 39px,
-      rgba(200,168,75,0.04) 40px
-    );
-  }
-
-  .hero-tag {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.2s forwards;
-  }
-
-  .hero h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4rem, 12vw, 11rem);
-    line-height: 0.9;
-    letter-spacing: -0.02em;
-    color: var(--white);
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.4s forwards;
-  }
-
-  .hero h1 span {
-    color: var(--gold);
-    display: block;
-  }
-
-  .hero-sub {
-    margin-top: 2.5rem;
-    font-size: clamp(1rem, 1.8vw, 1.2rem);
-    color: var(--muted);
-    max-width: 480px;
-    line-height: 1.7;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.6s forwards;
-  }
-
-  .hero-cta {
-    display: flex;
-    gap: 1.2rem;
-    margin-top: 3rem;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 0.8s forwards;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    background: var(--gold);
-    color: var(--black);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 1rem 2.2rem;
-    text-decoration: none;
-    transition: all 0.2s;
-    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-  }
-
-  .btn-primary:hover {
-    background: var(--amber);
-    transform: translateY(-2px);
-  }
-
-  .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'Barlow', sans-serif;
-    font-weight: 400;
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 1rem 2.2rem;
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  .hero-stats {
-    position: absolute;
-    bottom: 3rem;
-    right: 6vw;
-    display: flex;
-    gap: 3rem;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 1s forwards;
-  }
-
-  .stat {
-    text-align: right;
-  }
-
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .stat-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-top: 0.3rem;
-  }
-
-  /* ── SCROLL INDICATOR ── */
-  .scroll-ind {
-    position: absolute;
-    bottom: 3rem;
-    left: 6vw;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    opacity: 0;
-    animation: fadeUp 0.8s ease 1.2s forwards;
-  }
-
-  .scroll-line {
-    width: 40px;
-    height: 1px;
-    background: var(--gold-dim);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .scroll-line::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--gold);
-    animation: scanline 1.5s ease-in-out infinite;
-  }
-
-  @keyframes scanline {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
-
-  .scroll-text {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-
-  /* ── PRICING ── */
-  .pricing {
-    padding: 8rem 6vw;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .section-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 1rem;
-  }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    line-height: 1;
-    margin-bottom: 4rem;
-  }
-
-  .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-  }
-
-  .price-card {
-    background: var(--panel);
-    padding: 3rem 2.5rem;
-    position: relative;
-    transition: background 0.2s;
-  }
-
-  .price-card:hover {
-    background: var(--dark);
-  }
-
-  .price-card.featured {
-    background: var(--wood);
-  }
-
-  .price-card.featured:hover {
-    background: #4a3526;
-  }
-
-  .price-card.featured::before {
-    content: 'BEST VALUE';
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--gold);
-    border: 1px solid var(--gold-dim);
-    padding: 0.3rem 0.7rem;
-  }
-
-  .price-amount {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 4.5rem;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .price-currency {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    color: var(--muted);
-    vertical-align: super;
-    margin-right: 4px;
-  }
-
-  .price-desc {
-    margin-top: 1.2rem;
-    font-size: 15px;
-    color: var(--white);
-    line-height: 1.5;
-  }
-
-  .price-sub {
-    margin-top: 0.5rem;
-    font-size: 12px;
-    color: var(--muted);
-    font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 0.05em;
-  }
-
-  /* ── CATALOG ── */
-  .catalog {
-    padding: 8rem 6vw;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .cat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 4rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .cat-note {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    max-width: 320px;
-    line-height: 1.6;
-    text-align: right;
-  }
-
-  .cat-section {
-    margin-bottom: 4rem;
-  }
-
-  .cat-section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.8rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .cat-section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  .model-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1px;
-    background: var(--border);
-  }
-
-  .model-card {
-    background: var(--panel);
-    padding: 1.4rem 1.6rem;
-    cursor: default;
-    transition: background 0.15s;
-    position: relative;
-  }
-
-  .model-card:hover {
-    background: #1e1e1e;
-  }
-
-  .model-name {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--white);
-    letter-spacing: 0.03em;
-  }
-
-  .model-spec {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    margin-top: 0.4rem;
-    letter-spacing: 0.05em;
-  }
-
-  .model-badge {
-    position: absolute;
-    top: 0.8rem;
-    right: 0.8rem;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.1em;
-    color: var(--gold);
-    background: rgba(200,168,75,0.1);
-    padding: 0.2rem 0.5rem;
-    border: 1px solid var(--gold-dim);
-  }
-
-  /* ── HOW IT WORKS ── */
-  .how {
-    padding: 8rem 6vw;
-    border-bottom: 1px solid var(--border);
-    background: var(--panel);
-  }
-
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 3rem;
-    margin-top: 4rem;
-  }
-
-  .step {
-    position: relative;
-    padding-left: 2rem;
-    border-left: 2px solid var(--border);
-    transition: border-color 0.2s;
-  }
-
-  .step:hover {
-    border-color: var(--gold);
-  }
-
-  .step-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 5rem;
-    color: var(--border);
-    line-height: 1;
-    position: absolute;
-    top: -1rem;
-    left: -1rem;
-    transition: color 0.2s;
-  }
-
-  .step:hover .step-num {
-    color: rgba(200,168,75,0.15);
-  }
-
-  .step-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.8rem;
-    margin-top: 1rem;
-  }
-
-  .step-text {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.7;
-  }
-
-  /* ── FORMATS ── */
-  .formats {
-    padding: 6rem 6vw;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .format-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 3rem;
-  }
-
-  .format-chip {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.1em;
-    color: var(--white);
-    border: 1px solid var(--border);
-    padding: 0.8rem 1.5rem;
-    transition: all 0.2s;
-  }
-
-  .format-chip:hover {
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  .format-chip.highlight {
-    border-color: var(--gold-dim);
-    color: var(--gold);
-    background: rgba(200,168,75,0.05);
-  }
-
-  /* ── CTA BANNER ── */
-  .cta-banner {
-    padding: 8rem 6vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .cta-banner::before {
-    content: 'CNC';
-    position: absolute;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 30vw;
-    color: rgba(200,168,75,0.03);
-    letter-spacing: -0.05em;
-    pointer-events: none;
-    line-height: 1;
-  }
-
-  .cta-banner h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1;
-    margin-bottom: 1.5rem;
-    position: relative;
-  }
-
-  .cta-banner p {
-    color: var(--muted);
-    font-size: 15px;
-    max-width: 480px;
-    line-height: 1.7;
-    margin-bottom: 3rem;
-    position: relative;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    padding: 3rem 6vw;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .footer-brand {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.2rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-  }
-
-  .footer-note {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    padding: 1.5rem 6vw;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.95), transparent);
-    backdrop-filter: blur(4px);
-  }
-
-  .nav-brand {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.4rem;
-    letter-spacing: 0.15em;
-    color: var(--white);
-    text-decoration: none;
-  }
-
-  .nav-brand span { color: var(--gold); }
-
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-  }
-
-  .nav-links a {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover { color: var(--gold); }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── DIVIDER ── */
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
-    margin: 0 6vw;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 600px) {
-    .nav-links { display: none; }
-    .hero-stats { display: none; }
-    .cat-note { text-align: left; }
-    .scroll-ind { display: none; }
-  }
+:root{--black:#0a0a0a;--dark:#111111;--panel:#161616;--border:#2a2a2a;--gold:#c8a84b;--gold-dim:#7a6330;--amber:#e8b84b;--white:#f0ede8;--muted:#6a6560;--wood:#3d2b1f}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;font-weight:300;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.4}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.5rem 6vw;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(to bottom,rgba(10,10,10,.95),transparent);backdrop-filter:blur(4px)}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.15em;color:var(--white);text-decoration:none}
+.nav-brand span{color:var(--gold)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;padding:0 6vw;border-bottom:1px solid var(--border);overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(200,168,75,.06) 0%,transparent 70%),radial-gradient(ellipse 40% 80% at 20% 80%,rgba(61,43,31,.4) 0%,transparent 60%)}
+.hero-lines{position:absolute;right:0;top:0;width:55%;height:100%;background:repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(200,168,75,.04) 39px,rgba(200,168,75,.04) 40px)}
+.hero-tag{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:2rem;opacity:0;animation:fadeUp .8s ease .2s forwards}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,12vw,11rem);line-height:.9;letter-spacing:-.02em;opacity:0;animation:fadeUp .8s ease .4s forwards}
+.hero h1 span{color:var(--gold);display:block}
+.hero-sub{margin-top:2.5rem;font-size:clamp(1rem,1.8vw,1.2rem);color:var(--muted);max-width:480px;line-height:1.7;opacity:0;animation:fadeUp .8s ease .6s forwards}
+.hero-cta{display:flex;gap:1.2rem;margin-top:3rem;flex-wrap:wrap;opacity:0;animation:fadeUp .8s ease .8s forwards}
+.hero-stats{position:absolute;bottom:3rem;right:6vw;display:flex;gap:3rem;opacity:0;animation:fadeUp .8s ease 1s forwards}
+.stat{text-align:right}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--gold);line-height:1}
+.stat-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-top:.3rem}
+.btn-primary{display:inline-flex;align-items:center;gap:.6rem;background:var(--gold);color:var(--black);font-family:'Barlow',sans-serif;font-weight:600;font-size:13px;letter-spacing:.15em;text-transform:uppercase;padding:1rem 2.2rem;text-decoration:none;transition:all .2s;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.btn-primary:hover{background:var(--amber);transform:translateY(-2px)}
+.btn-secondary{display:inline-flex;align-items:center;gap:.6rem;border:1px solid var(--border);color:var(--muted);font-family:'Barlow',sans-serif;font-weight:400;font-size:13px;letter-spacing:.15em;text-transform:uppercase;padding:1rem 2.2rem;text-decoration:none;transition:all .2s}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+.btn-paypal{display:inline-flex;align-items:center;gap:.8rem;background:#0070ba;color:#fff;font-family:'Barlow',sans-serif;font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:1rem 2.2rem;text-decoration:none;transition:all .2s;border-radius:4px}
+.btn-paypal:hover{background:#005ea6;transform:translateY(-2px)}
+.btn-free{display:inline-flex;align-items:center;gap:.6rem;background:#4caf50;color:#000;font-family:'Barlow',sans-serif;font-weight:700;font-size:12px;letter-spacing:.15em;text-transform:uppercase;padding:.9rem 2rem;text-decoration:none;transition:all .2s}
+.btn-free:hover{background:#66bb6a;transform:translateY(-2px)}
+.pricing{padding:8rem 6vw;border-bottom:1px solid var(--border)}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;margin-bottom:1rem}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,5vw,4rem);line-height:1;margin-bottom:4rem}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.price-card{background:var(--panel);padding:3rem 2.5rem;position:relative;transition:background .2s}
+.price-card:hover{background:var(--dark)}
+.price-card.featured{background:var(--wood)}
+.price-card.featured:hover{background:#4a3526}
+.price-card.featured::before{content:'BEST VALUE';position:absolute;top:1.5rem;right:1.5rem;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--gold);border:1px solid var(--gold-dim);padding:.3rem .7rem}
+.price-amount{font-family:'Bebas Neue',sans-serif;font-size:4.5rem;color:var(--gold);line-height:1}
+.price-currency{font-family:'Share Tech Mono',monospace;font-size:14px;color:var(--muted);vertical-align:super;margin-right:4px}
+.price-desc{margin-top:1.2rem;font-size:15px;color:var(--white);line-height:1.5}
+.price-sub{margin-top:.5rem;font-size:12px;color:var(--muted);font-family:'Share Tech Mono',monospace;letter-spacing:.05em}
+.buy-section{padding:5rem 6vw;background:var(--wood);border-bottom:1px solid var(--border);display:flex;flex-wrap:wrap;gap:3rem;align-items:center;justify-content:space-between}
+.buy-text h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;margin-bottom:1rem}
+.buy-text p{color:var(--muted);font-size:14px;line-height:1.7;max-width:480px}
+.buy-actions{display:flex;flex-direction:column;gap:1rem;align-items:flex-start}
+.buy-note{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--gold-dim);letter-spacing:.1em;margin-top:.5rem}
+.catalog{padding:8rem 6vw;border-bottom:1px solid var(--border)}
+.cat-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4rem;flex-wrap:wrap;gap:1rem}
+.cat-note{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.1em;max-width:320px;line-height:1.6;text-align:right}
+.cat-section{margin-bottom:4rem}
+.cat-section-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.1em;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:.8rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem}
+.cat-badge{font-size:.7rem;color:var(--gold);font-family:'Share Tech Mono',monospace;border:1px solid var(--gold-dim);padding:.2rem .6rem}
+.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1px;background:var(--border)}
+.model-card{background:var(--panel);cursor:pointer;transition:background .15s;position:relative;overflow:hidden}
+.model-card:hover{background:#1e1e1e}
+.model-card:hover .model-img{transform:scale(1.04)}
+.model-img-wrap{width:100%;aspect-ratio:16/10;overflow:hidden;background:#0d0d0d}
+.model-img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease;display:block}
+.model-info{padding:1rem 1.2rem}
+.model-name{font-size:14px;font-weight:600;color:var(--white);letter-spacing:.03em}
+.model-spec{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);margin-top:.3rem;letter-spacing:.05em}
+.model-badge{position:absolute;top:.6rem;right:.6rem;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:.1em;color:var(--gold);background:rgba(10,10,10,.85);padding:.2rem .5rem;border:1px solid var(--gold-dim)}
+.model-free-badge{color:#4caf50;border-color:#4caf50}
+.free-highlight{background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.3);padding:2rem 2.5rem;margin-bottom:3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem}
+.free-text h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:#4caf50}
+.free-text p{font-size:13px;color:var(--muted);margin-top:.4rem;font-family:'Share Tech Mono',monospace;letter-spacing:.05em}
+.how{padding:8rem 6vw;border-bottom:1px solid var(--border);background:var(--panel)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:3rem;margin-top:4rem}
+.step{position:relative;padding-left:2rem;border-left:2px solid var(--border);transition:border-color .2s}
+.step:hover{border-color:var(--gold)}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--border);line-height:1;position:absolute;top:-1rem;left:-1rem;transition:color .2s}
+.step:hover .step-num{color:rgba(200,168,75,.15)}
+.step-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.05em;margin-bottom:.8rem;margin-top:1rem}
+.step-text{font-size:14px;color:var(--muted);line-height:1.7}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;align-items:center;justify-content:center;padding:2rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--dark);border:1px solid var(--border);max-width:900px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-img{width:100%;max-height:450px;object-fit:cover;display:block}
+.modal-body{padding:2rem}
+.modal-name{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:.05em}
+.modal-spec{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--gold);margin-top:.5rem;letter-spacing:.1em}
+.modal-desc{font-size:14px;color:var(--muted);margin-top:1rem;line-height:1.7}
+.modal-actions{display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap}
+.modal-close{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,.7);border:1px solid var(--border);color:var(--muted);width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:10}
+.modal-close:hover{border-color:var(--gold);color:var(--gold)}
+footer{padding:3rem 6vw;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-brand{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.1em;color:var(--muted)}
+.footer-note{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.1em}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);margin:0 6vw}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.nav-links{display:none}.hero-stats{display:none}.cat-note{text-align:left}.model-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="#" class="nav-brand">Guitar<span>Modeling</span>CNC</a>
   <ul class="nav-links">
@@ -654,270 +113,280 @@
   </ul>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-lines"></div>
-
   <p class="hero-tag">// Professional 3D Files for CNC Luthiers</p>
   <h1>Guitar<span>Modeling</span>for CNC</h1>
   <p class="hero-sub">100+ precision 3D models of guitars and basses, built in Fusion 360. Ready for your CNC workflow. From classic shapes to rare signature designs.</p>
-
   <div class="hero-cta">
     <a href="#catalog" class="btn-primary">Browse Catalog →</a>
-    <a href="https://www.facebook.com/GUITARMODELINGFORCNC" target="_blank" class="btn-secondary">Contact on Facebook</a>
+    <a href="https://paypal.me/guitarsresourses" target="_blank" class="btn-paypal">💳 Pay via PayPal</a>
   </div>
-
   <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">100+</div>
-      <div class="stat-label">Models</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">F360</div>
-      <div class="stat-label">Native Format</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">USD</div>
-      <div class="stat-label">Pricing</div>
-    </div>
-  </div>
-
-  <div class="scroll-ind">
-    <div class="scroll-line"></div>
-    <span class="scroll-text">Scroll to explore</span>
+    <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Models</div></div>
+    <div class="stat"><div class="stat-num">F360</div><div class="stat-label">Native Format</div></div>
+    <div class="stat"><div class="stat-num">USD</div><div class="stat-label">Pricing</div></div>
   </div>
 </section>
 
-<!-- PRICING -->
 <section class="pricing" id="pricing">
   <p class="section-label">// Pricing</p>
   <h2 class="section-title">Simple, Flat Rates</h2>
-
   <div class="pricing-grid">
-    <div class="price-card">
-      <div class="price-amount"><span class="price-currency">USD</span>60</div>
-      <div class="price-desc">1 Model from the catalog</div>
-      <div class="price-sub">Any body, full instrument or bass file</div>
-    </div>
-    <div class="price-card featured">
-      <div class="price-amount"><span class="price-currency">USD</span>100</div>
-      <div class="price-desc">2 Models from the catalog</div>
-      <div class="price-sub">Mix and match any two models</div>
-    </div>
-    <div class="price-card">
-      <div class="price-amount"><span class="price-currency">USD</span>200</div>
-      <div class="price-desc">5 Models from the catalog</div>
-      <div class="price-sub">Best rate — ideal for small shops</div>
-    </div>
-    <div class="price-card">
-      <div class="price-amount"><span class="price-currency">USD</span>200</div>
-      <div class="price-desc">Custom model on request</div>
-      <div class="price-sub">Built to your specs in Fusion 360</div>
-    </div>
+    <div class="price-card"><div class="price-amount"><span class="price-currency">USD</span>60</div><div class="price-desc">1 Model from the catalog</div><div class="price-sub">Any body, full instrument or bass file</div></div>
+    <div class="price-card featured"><div class="price-amount"><span class="price-currency">USD</span>100</div><div class="price-desc">2 Models from the catalog</div><div class="price-sub">Mix and match any two models</div></div>
+    <div class="price-card"><div class="price-amount"><span class="price-currency">USD</span>200</div><div class="price-desc">5 Models from the catalog</div><div class="price-sub">Best rate — ideal for small shops</div></div>
+    <div class="price-card"><div class="price-amount"><span class="price-currency">USD</span>200</div><div class="price-desc">Custom model on request</div><div class="price-sub">Built to your specs in Fusion 360</div></div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- CATALOG -->
-<section class="catalog" id="catalog">
-  <div class="cat-header">
-    <div>
-      <p class="section-label">// Full Catalog</p>
-      <h2 class="section-title">Available Models</h2>
-    </div>
-    <p class="cat-note">All files are delivered in Fusion 360 native format (.f3d). Additional formats available on request.</p>
+<section class="buy-section" id="contact">
+  <div class="buy-text">
+    <p class="section-label">// How to Buy</p>
+    <h2>Ready to Order?</h2>
+    <p>Pick the models you want from the catalog, then pay directly via PayPal. Files are delivered to your email in Fusion 360 native format (.f3d). Include the model name(s) in the PayPal payment note.</p>
   </div>
-
-  <!-- Bodies -->
-  <div class="cat-section">
-    <div class="cat-section-title">Body Files</div>
-    <div class="model-grid">
-      <div class="model-card"><div class="model-name">Classic Strat</div><div class="model-spec">2 neck joint options · Classic / Ergonomic</div></div>
-      <div class="model-card"><div class="model-name">HSS Strat</div><div class="model-spec">Classic or ergonomic neck joint</div></div>
-      <div class="model-card"><div class="model-name">HSS Strat 2pt Bridge</div><div class="model-spec">Two-point bridge variant</div></div>
-      <div class="model-card"><div class="model-name">Lynch Tiger</div><div class="model-spec">ESP-style</div></div>
-      <div class="model-card"><div class="model-name">Modern Strat</div><div class="model-spec">Charvel-style</div></div>
-      <div class="model-card"><div class="model-name">San Dimas Style</div><div class="model-spec">Scale 25.5" · 22 frets · Strat neck joint</div></div>
-      <div class="model-card"><div class="model-name">MII</div><div class="model-spec">ESP-style</div></div>
-      <div class="model-card"><div class="model-name">Banzai</div><div class="model-spec">ESP-style</div></div>
-      <div class="model-card"><div class="model-name">Electra Jet Style</div><div class="model-spec">Scale 25.5" · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Pensa Style</div><div class="model-spec">Classic Strat-inspired</div></div>
-      <div class="model-card"><div class="model-name">PRS Single Cut</div><div class="model-spec">Scale 25" · Set neck · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Winger</div><div class="model-spec">After RBM / Voyager · 24 frets RG neck</div></div>
-      <div class="model-card"><div class="model-name">Testament</div><div class="model-spec">Ibanez-style · Alt neck & control layouts</div></div>
-      <div class="model-card"><div class="model-name">JPM</div><div class="model-spec">Ibanez-style</div></div>
-      <div class="model-card"><div class="model-name">RGA</div><div class="model-spec">After Ibanez RGA · 24 frets RG neck</div></div>
-      <div class="model-card"><div class="model-name">Surfing in a Blue Dream</div><div class="model-spec">After Joe Satriani · 25.5" · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">GEM</div><div class="model-spec">Ibanez-style · Multiple variants</div></div>
-      <div class="model-card"><div class="model-name">CIA</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">CIA 7</div><div class="model-spec">7-string variant</div></div>
-      <div class="model-card"><div class="model-name">GEM 7</div><div class="model-spec">7-string variant</div></div>
-      <div class="model-card"><div class="model-name">Deep Space</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">Fire</div><div class="model-spec">Original design</div></div>
-    </div>
-  </div>
-
-  <!-- Bodies with CAM -->
-  <div class="cat-section">
-    <div class="cat-section-title">Bodies with CAM in Fusion <span style="font-size:0.8rem;color:var(--gold);font-family:'Share Tech Mono',monospace;">TOOLPATH INCLUDED</span></div>
-    <div class="model-grid">
-      <div class="model-card"><div class="model-badge">CAM READY</div><div class="model-name">Fighter</div><div class="model-spec">Fusion 360 toolpath included</div></div>
-      <div class="model-card"><div class="model-badge">CAM READY</div><div class="model-name">540piii</div><div class="model-spec">Fusion 360 toolpath included</div></div>
-      <div class="model-card"><div class="model-badge">CAM READY</div><div class="model-name">Winger</div><div class="model-spec">Fusion 360 toolpath included</div></div>
-      <div class="model-card"><div class="model-badge">CAM READY</div><div class="model-name">Chernobyl Tiger</div><div class="model-spec">Fusion 360 toolpath included</div></div>
-    </div>
-  </div>
-
-  <!-- Full Instruments -->
-  <div class="cat-section">
-    <div class="cat-section-title">Full Instrument Files</div>
-    <div class="model-grid">
-      <div class="model-card"><div class="model-name">Classic Strat</div><div class="model-spec">Baritone / Modern / Fusion variants</div></div>
-      <div class="model-card"><div class="model-name">Modern Strat</div><div class="model-spec">Models 1 & 2</div></div>
-      <div class="model-card"><div class="model-name">DK24 Style</div><div class="model-spec">After Charvel DK24 · 25.5" · 24 frets</div></div>
-      <div class="model-card"><div class="model-name">Jazz Baby!</div><div class="model-spec">Jazzmaster style</div></div>
-      <div class="model-card"><div class="model-name">Electra Jet Style</div><div class="model-spec">Scale 25.5" · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Custom Jazzmaster</div><div class="model-spec">Scale 25.5" · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Far from a 335</div><div class="model-spec">Semi-hollow inspired</div></div>
-      <div class="model-card"><div class="model-name">Custom Single Cut</div><div class="model-spec">Scale 24.75" · Set neck · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Custom Double Cut</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">58 V</div><div class="model-spec">Flying V style</div></div>
-      <div class="model-card"><div class="model-name">Asteroida</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">Snakefart</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">GIGER TV / TV / Custom TVZ</div><div class="model-spec">TV-style variants</div></div>
-      <div class="model-card"><div class="model-name">Porthlander / TV Strat</div><div class="model-spec">Hybrid originals</div></div>
-      <div class="model-card"><div class="model-name">DK 24TV / DK 22TV</div><div class="model-spec">Dinky meets TV</div></div>
-      <div class="model-card"><div class="model-name">Cabronita</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">PRS</div><div class="model-spec">Scale 25" · Set neck · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Echopark Bakersfield</div><div class="model-spec">Scale 24.75" · Set neck · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Travis Bean Style</div><div class="model-spec">Scale 24.75" · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Valeno</div><div class="model-spec">Scale 25" · 24 frets · Bolt-on</div></div>
-      <div class="model-card"><div class="model-name">Custom Fusion Axe</div><div class="model-spec">Scale 25.5" · 24 frets</div></div>
-      <div class="model-card"><div class="model-name">North Modern</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">D Straits Style</div><div class="model-spec">After Mark Knopfler's Pensa · 25.5" · Set neck</div></div>
-      <div class="model-card"><div class="model-name">Horizont / Horizont Floyd</div><div class="model-spec">Original · Floyd Rose variant</div></div>
-      <div class="model-card"><div class="model-name">Nuno</div><div class="model-spec">After Extreme · Unique neck joint · History incl.</div></div>
-      <div class="model-card"><div class="model-name">Majesty</div><div class="model-spec">After Music Man Majesty · Set neck · History incl.</div></div>
-      <div class="model-card"><div class="model-name">Heartfield</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">Hellbringer</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">Nefertiti</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">UFO</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">Southern Cross</div><div class="model-spec">After Dimebag · 24.75" · Set neck · History incl.</div></div>
-      <div class="model-card"><div class="model-name">Dimes X / Stealth</div><div class="model-spec">W-style · 24.75" Set neck · History incl.</div></div>
-      <div class="model-card"><div class="model-name">Baritone Stealth</div><div class="model-spec">Scale 27" · Set neck · History incl.</div></div>
-      <div class="model-card"><div class="model-name">Kelly Fighter</div><div class="model-spec">Jackson-style</div></div>
-      <div class="model-card"><div class="model-name">Andy Oads / Emperor B</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Dinky DK Style</div><div class="model-spec">Dinky meets DK · 25.5" · 24 frets</div></div>
-      <div class="model-card"><div class="model-name">540piii / 540p VAI</div><div class="model-spec">Ibanez 540 inspired variants</div></div>
-      <div class="model-card"><div class="model-name">Medussa</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">Warlock Style / Bich!!</div><div class="model-spec">BC Rich inspired · 24.75" neck-thru</div></div>
-      <div class="model-card"><div class="model-name">Victorynox / X Bich</div><div class="model-spec">BC Rich variants</div></div>
-      <div class="model-card"><div class="model-name">Iron Eagle / X Rays / Tiger</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Chernobyl Tiger / WASP</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Cyber Punk 77</div><div class="model-spec">Original — futuristic design</div></div>
-      <div class="model-card"><div class="model-name">7 Rhoads / 7 Kelly Fighter</div><div class="model-spec">7-string versions</div></div>
-      <div class="model-card"><div class="model-name">XIPHIOS / Mii</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Sex and Warfare / Sevilla 92</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Martin's Dream / 1987 GEM</div><div class="model-spec">Tribute designs</div></div>
-      <div class="model-card"><div class="model-name">CIA / Engraved Faces</div><div class="model-spec">1mm engraved face variants</div></div>
-      <div class="model-card"><div class="model-name">Pero Juguetona · FREE</div><div class="model-spec">Mikro · Scale 22.2" · Free sample</div></div>
-      <div class="model-card"><div class="model-name">Reb Red / Aceituna</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Fear in the Space / Kikos Style</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Teemu Style / Joes / Sable</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Fear in 7 Space</div><div class="model-spec">7-string variant</div></div>
-      <div class="model-card"><div class="model-name">Old School / New School</div><div class="model-spec">Original designs</div></div>
-      <div class="model-card"><div class="model-name">Khaller / Cia 7</div><div class="model-spec">7-string designs</div></div>
-      <div class="model-card"><div class="model-name">Cool RG Design</div><div class="model-spec">Original design</div></div>
-      <div class="model-card"><div class="model-name">Stephen Carpenter Style</div><div class="model-spec">8-string inspired</div></div>
-      <div class="model-card"><div class="model-name">Ugly / Still Ugly / WTF?</div><div class="model-spec">Experimental originals</div></div>
-      <div class="model-card"><div class="model-name">42 Frets</div><div class="model-spec">Extended range · Experimental</div></div>
-    </div>
-  </div>
-
-  <!-- Neck Inlays -->
-  <div class="cat-section">
-    <div class="cat-section-title">Neck Inlay Files</div>
-    <div class="model-grid">
-      <div class="model-card"><div class="model-name">Cia Blossom</div><div class="model-spec">Inlay pattern set</div></div>
-      <div class="model-card"><div class="model-name">TOL</div><div class="model-spec">Inlay pattern set</div></div>
-      <div class="model-card"><div class="model-name">Egypt</div><div class="model-spec">Inlay pattern set</div></div>
-    </div>
-  </div>
-
-  <!-- Bass -->
-  <div class="cat-section">
-    <div class="cat-section-title">Bass Files</div>
-    <div class="model-grid">
-      <div class="model-card"><div class="model-name">Majesty Bass</div><div class="model-spec">34" scale</div></div>
-      <div class="model-card"><div class="model-name">McCartney Style</div><div class="model-spec">30" scale · Short scale</div></div>
-      <div class="model-card"><div class="model-name">Press</div><div class="model-spec">Scale 24.75" · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">Iron</div><div class="model-spec">Scale 24.75" · 22 frets</div></div>
-      <div class="model-card"><div class="model-name">War</div><div class="model-spec">Original design</div></div>
-    </div>
+  <div class="buy-actions">
+    <a href="https://paypal.me/guitarsresourses" target="_blank" class="btn-paypal">💳 Pay Now via PayPal</a>
+    <a href="https://www.facebook.com/GUITARMODELINGFORCNC" target="_blank" class="btn-secondary">Message on Facebook</a>
+    <p class="buy-note">PAYMENT IN USD · DELIVERY VIA EMAIL · WORLDWIDE</p>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<div class="divider"></div>
+
+<section class="catalog" id="catalog">
+  <div class="cat-header">
+    <div><p class="section-label">// Full Catalog</p><h2 class="section-title">Available Models</h2></div>
+    <p class="cat-note">Click any model to see details and buy. Files delivered in Fusion 360 native format (.f3d).</p>
+  </div>
+
+  <div class="free-highlight">
+    <div class="free-text"><h3>🎸 FREE Model — Pero Juguetona (Mikro)</h3><p>Short scale 22.2" · Download the .f3d file for free and try it on your CNC</p></div>
+    <a href="https://www.mediafire.com/file/7od2yrb88o739ym/MIKRO_v30.rar/file" target="_blank" class="btn-free">⬇ Download Free</a>
+  </div>
+
+  <div class="cat-section">
+    <div class="cat-section-title">Body Files</div>
+    <div class="model-grid" id="grid-bodies"></div>
+  </div>
+
+  <div class="cat-section">
+    <div class="cat-section-title">Bodies with CAM in Fusion <span class="cat-badge">TOOLPATH INCLUDED</span></div>
+    <div class="model-grid" id="grid-cam"></div>
+  </div>
+
+  <div class="cat-section">
+    <div class="cat-section-title">Neck Inlay Files</div>
+    <div class="model-grid" id="grid-inlays"></div>
+  </div>
+
+  <div class="cat-section">
+    <div class="cat-section-title">Full Instrument Files</div>
+    <div class="model-grid" id="grid-full"></div>
+  </div>
+
+  <div class="cat-section">
+    <div class="cat-section-title">Bass Files</div>
+    <div class="model-grid" id="grid-bass"></div>
+  </div>
+</section>
+
 <section class="how" id="how">
   <p class="section-label">// Process</p>
   <h2 class="section-title">How It Works</h2>
-
   <div class="steps">
-    <div class="step">
-      <div class="step-num">01</div>
-      <div class="step-title">Browse & Choose</div>
-      <div class="step-text">Pick one or more models from the catalog. Can't find your shape? Request a custom model built to your specs.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">02</div>
-      <div class="step-title">Contact & Pay</div>
-      <div class="step-text">Reach out on Facebook. Payment via PayPal in USD. Fast response, no middlemen.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">03</div>
-      <div class="step-title">Receive the File</div>
-      <div class="step-text">Get your Fusion 360 native file (.f3d) delivered directly. Open it, review it, and set up your own toolpath for your machine and tools.</div>
-    </div>
-    <div class="step">
-      <div class="step-num">04</div>
-      <div class="step-title">Cut & Build</div>
-      <div class="step-text">Generate your CAM toolpath in Fusion 360 or export to your preferred CAM software. Cut the body on your CNC and start building.</div>
-    </div>
+    <div class="step"><div class="step-num">01</div><div class="step-title">Browse & Choose</div><div class="step-text">Pick one or more models from the catalog. Can't find your shape? Request a custom model built to your specs for USD 200.</div></div>
+    <div class="step"><div class="step-num">02</div><div class="step-title">Pay via PayPal</div><div class="step-text">Send payment via PayPal to <strong style="color:var(--gold)">paypal.me/guitarsresourses</strong>. Include the model name(s) in the note. Fast, secure, worldwide.</div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-title">Receive the File</div><div class="step-text">Get your Fusion 360 native file (.f3d) delivered to your email. Open, review, and set up your own toolpath for your machine and tools.</div></div>
+    <div class="step"><div class="step-num">04</div><div class="step-title">Cut & Build</div><div class="step-text">Generate your CAM toolpath in Fusion 360 or export to your preferred CAM software. Cut on your CNC and start building.</div></div>
   </div>
 </section>
 
-<!-- FORMATS -->
-<section class="formats">
-  <p class="section-label">// File Formats</p>
-  <h2 class="section-title">Delivered Formats</h2>
-  <div class="format-list">
-    <div class="format-chip highlight">.F3D — Fusion 360 Native</div>
-    <div class="format-chip highlight">.STEP — Universal CAD</div>
-    <div class="format-chip">.STL — On Request</div>
-    <div class="format-chip">.DXF — On Request</div>
-  </div>
-  <p style="margin-top:2rem; font-size:13px; color:var(--muted); font-family:'Share Tech Mono',monospace; letter-spacing:0.05em; line-height:1.7;">
-    Files are delivered as 3D solid models. The buyer is responsible for setting up their own toolpath based on their CNC machine, tooling, and workflow.<br>
-    Selected models include the Fusion 360 CAM setup — these are marked <span style="color:var(--gold)">CAM READY</span> in the catalog.
-  </p>
-</section>
-
-<!-- CTA BANNER -->
-<section class="cta-banner" id="contact">
-  <h2>Ready to Build<br>Your Dream Guitar?</h2>
-  <p>Browse the catalog, pick your models, and reach out on Facebook. Custom requests welcome — if you can dream it, we can model it.</p>
-  <a href="https://www.facebook.com/GUITARMODELINGFORCNC" target="_blank" class="btn-primary" style="font-size:14px; padding:1.2rem 3rem;">
-    Contact on Facebook →
-  </a>
-</section>
-
-<!-- FOOTER -->
 <footer>
   <div class="footer-brand">Guitar Modeling for CNC</div>
-  <div class="footer-note">3D Files for CNC Luthiers · Worldwide · PayPal Accepted</div>
+  <div class="footer-note">3D Files for CNC Luthiers · Worldwide · PayPal Accepted · paypal.me/guitarsresourses</div>
 </footer>
 
+<div class="modal-overlay" id="modal" onclick="closeOnOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <img class="modal-img" id="modal-img" src="" alt="">
+    <div class="modal-body">
+      <div class="modal-name" id="modal-name"></div>
+      <div class="modal-spec" id="modal-spec"></div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <div class="modal-actions" id="modal-actions"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MODELS = {
+  bodies: [
+    {name:'Classic Strat', spec:'2 neck joint options · Classic / Ergonomic', desc:'Fender Stratocaster style body. Two neck pocket options: classic square and ergonomic contoured.', img:'images/classic-strat.jpg'},
+    {name:'HSS Strat', spec:'Classic or ergonomic neck joint', desc:'HSS pickup configuration Stratocaster body.', img:'images/hss-strat.jpg'},
+    {name:'HSS Strat — 2pt Bridge', spec:'Two-point bridge variant', desc:'HSS Strat body with two-point tremolo bridge routing.', img:'images/hss-strat-2pt.jpg'},
+    {name:'Lynch Tiger', spec:'ESP-style', desc:'George Lynch Tiger-style body. ESP-inspired design.', img:'images/lynch-tiger.jpg'},
+    {name:'Modern Strat', spec:'Charvel-style', desc:'Modern contoured Strat body in Charvel style.', img:'images/modern-strat-body.jpg'},
+    {name:'San Dimas Style', spec:'Scale 25.5" · 22 frets · Strat neck joint', desc:'Charvel San Dimas inspired body. Classic Strat neck pocket.', img:'images/san-dimas.jpg'},
+    {name:'MII', spec:'ESP-style', desc:'ESP MII inspired body file.', img:'images/mii.jpg'},
+    {name:'Banzai', spec:'ESP-style', desc:'ESP Banzai inspired body file.', img:'images/banzai.jpg'},
+    {name:'Electra Jet Style', spec:'Scale 25.5" · 22 frets', desc:'Electra Jet inspired body. Classic Strat neck joint.', img:'images/electra-jet-body.jpg'},
+    {name:'Pensa Style', spec:'Classic Strat-inspired', desc:'Pensa-style body, Mark Knopfler inspired.', img:'images/pensa.jpg'},
+    {name:'PRS Single Cut', spec:'Scale 25" · Set neck · 22 frets', desc:'PRS Single Cut style body with set neck joint.', img:'images/prs-single-cut-body.jpg'},
+    {name:'Winger', spec:'After RBM/Voyager · 24 frets RG neck', desc:'Made after the RBM or Voyager. Designed for 24-fret RG type necks. Fusion history available.', img:'images/winger-body.jpg'},
+    {name:'Testament', spec:'Ibanez-style · Alt neck & control layouts', desc:'Testament body, Ibanez style. Alternative neck joints and control layouts included.', img:'images/testament.jpg'},
+    {name:'JPM', spec:'Ibanez John Petrucci Model', desc:'JPM style body, Ibanez-inspired.', img:'images/jpm.jpg'},
+    {name:'RGA', spec:'After Ibanez RGA · 24 frets RG neck', desc:'Made after the Ibanez RGA. Designed for 24-fret RG necks. Fusion history available.', img:'images/rga.jpg'},
+    {name:'Surfing in a Blue Dream', spec:'After Joe Satriani · Scale 25.5" · 22 frets', desc:'Made after Joe Satriani signature guitar. 25.5" scale, 22 frets.', img:'images/surfing-blue-dream.jpg'},
+    {name:'GEM', spec:'Ibanez Steve Vai-style · Multiple variants', desc:'Steve Vai GEM inspired body. Multiple variants available.', img:'images/gem.jpg'},
+    {name:'CIA', spec:'Original design', desc:'CIA original body design.', img:'images/cia-body.jpg'},
+    {name:'CIA 7', spec:'7-string original design', desc:'CIA body in 7-string version.', img:'images/cia-7-body.jpg'},
+    {name:'GEM 7', spec:'7-string variant', desc:'GEM body in 7-string version.', img:'images/gem-7.jpg'},
+    {name:'Deep Space', spec:'Original design', desc:'Deep Space original body design.', img:'images/deep-space.jpg'},
+    {name:'Fire', spec:'Original design', desc:'Fire original body design.', img:'images/fire.jpg'},
+  ],
+  cam: [
+    {name:'Fighter + 540piii', spec:'CAM Ready — Toolpath included', desc:'Fighter and 540piii bodies with full Fusion 360 CAM setup. Toolpath ready to run.', img:'images/cam-fighter-540.jpg', badge:'CAM READY'},
+    {name:'Winger + Chernobyl Tiger', spec:'CAM Ready — Toolpath included', desc:'Winger and Chernobyl Tiger bodies with full Fusion 360 CAM setup included.', img:'images/cam-winger-chernobyl.jpg', badge:'CAM READY'},
+  ],
+  inlays: [
+    {name:'Cia Blossom Inlay', spec:'Neck inlay pattern set', desc:'Cia Blossom decorative neck inlay pattern set.', img:'images/inlay-cia-blossom.jpg'},
+    {name:'TOL Inlay', spec:'Neck inlay pattern set', desc:'TOL decorative neck inlay pattern set.', img:'images/inlay-tol.jpg'},
+    {name:'Egypt Inlay', spec:'Neck inlay pattern set', desc:'Egypt themed decorative neck inlay pattern set.', img:'images/inlay-egypt.jpg'},
+  ],
+  full: [
+    {name:'Classic Strat — Full', spec:'Baritone / Modern / Fusion variants', desc:'Complete instrument file. Includes baritone, modern and fusion variants.', img:'images/full-classic-strat.jpg'},
+    {name:'DK24 Style', spec:'After Charvel DK24 · Scale 25.5" · 24 frets', desc:'Made after the Charvel DK24. Full instrument file.', img:'images/dk24.jpg'},
+    {name:'Jazz Baby!', spec:'Jazzmaster style', desc:'Jazzmaster inspired full instrument file.', img:'images/jazz-baby.jpg'},
+    {name:'Custom Jazzmaster', spec:'Scale 25.5" · 22 frets', desc:'Custom Jazzmaster full instrument file.', img:'images/custom-jazzmaster.jpg'},
+    {name:'Les', spec:'Single cut inspired', desc:'Les Paul inspired full instrument file.', img:'images/les.jpg'},
+    {name:'Far from a 335', spec:'Semi-hollow inspired', desc:'Semi-hollow body inspired full instrument.', img:'images/far-from-335.jpg'},
+    {name:'Custom Single Cut', spec:'Scale 24.75" · Set neck · 22 frets', desc:'Custom single cut full instrument with set neck joint.', img:'images/custom-single-cut.jpg'},
+    {name:'58 V', spec:'Flying V style', desc:'58 Flying V style full instrument.', img:'images/58v.jpg'},
+    {name:'Asteroida', spec:'Original design', desc:'Asteroida original design full instrument.', img:'images/asteroida.jpg'},
+    {name:'Snakefart', spec:'Original design', desc:'Snakefart original design full instrument.', img:'images/snakefart.jpg'},
+    {name:'GIGER TV', spec:'TV-style original', desc:'GIGER TV style body full instrument.', img:'images/giger-tv.jpg'},
+    {name:'TV', spec:'TV-style', desc:'TV style full instrument.', img:'images/tv.jpg'},
+    {name:'Custom TVZ', spec:'TV variant', desc:'Custom TVZ full instrument.', img:'images/custom-tvz.jpg'},
+    {name:'Porthlander', spec:'Hybrid original', desc:'Porthlander hybrid original design.', img:'images/porthlander.jpg'},
+    {name:'TV Strat', spec:'Hybrid original', desc:'TV meets Strat hybrid design.', img:'images/tv-strat.jpg'},
+    {name:'DK 24TV', spec:'Dinky meets TV', desc:'Dinky DK meets TV body full instrument.', img:'images/dk24tv.jpg'},
+    {name:'DK 22TV', spec:'Dinky meets TV', desc:'Dinky DK22 meets TV body full instrument.', img:'images/dk22tv.jpg'},
+    {name:'Cabronita', spec:'Original design', desc:'Cabronita full instrument file.', img:'images/cabronita.jpg'},
+    {name:'PRS — Full', spec:'Scale 25" · Set neck · 22 frets', desc:'PRS full instrument file with set neck.', img:'images/prs-full.jpg'},
+    {name:'Echopark Bakersfield', spec:'Scale 24.75" · Set neck · 22 frets', desc:'Echopark Bakersfield style full instrument.', img:'images/echopark.jpg'},
+    {name:'Travis Bean Style', spec:'Scale 24.75" · 22 frets', desc:'Travis Bean inspired full instrument.', img:'images/travis-bean.jpg'},
+    {name:'Valeno', spec:'Scale 25" · 24 frets · Bolt-on', desc:'Valeno original design, bolt-on neck.', img:'images/valeno.jpg'},
+    {name:'Custom Fusion Axe', spec:'Scale 25.5" · 24 frets', desc:'Custom fusion style guitar full instrument.', img:'images/custom-fusion-axe.jpg'},
+    {name:'North Modern', spec:'Original design', desc:'North Modern original design full instrument.', img:'images/north-modern.jpg'},
+    {name:'D Straits Style', spec:'After Mark Knopfler Pensa · Set neck', desc:'Made after Mark Knopfler Pensa guitar. Set neck joint.', img:'images/d-straits.jpg'},
+    {name:'Horizont', spec:'Original design', desc:'Horizont original design full instrument.', img:'images/horizont.jpg'},
+    {name:'Horizont Floyd', spec:'Floyd Rose variant', desc:'Horizont with Floyd Rose routing full instrument.', img:'images/horizont-floyd.jpg'},
+    {name:'Nuno', spec:'After Extreme · Unique neck joint · History incl.', desc:'Made after Nuno Bettencourt Extreme guitar. Unique neck joint. Fusion history included.', img:'images/nuno.jpg'},
+    {name:'Majesty', spec:'After Music Man Majesty · Set neck · History incl.', desc:'Made after the Music Man John Petrucci Majesty. Set neck. Fusion history included.', img:'images/majesty.jpg'},
+    {name:'Heartfield', spec:'Original design', desc:'Heartfield full instrument file.', img:'images/heartfield.jpg'},
+    {name:'Hellbringer', spec:'Original design', desc:'Hellbringer original design full instrument.', img:'images/hellbringer.jpg'},
+    {name:'Nefertiti', spec:'Original design', desc:'Nefertiti original design full instrument.', img:'images/nefertiti.jpg'},
+    {name:'UFO', spec:'Original design', desc:'UFO original design full instrument.', img:'images/ufo.jpg'},
+    {name:'Southern Cross', spec:'After Dimebag · Scale 24.75" · Set neck · History incl.', desc:'Made after the classic Dimebag Darrell guitar. 24.75" scale, set neck. Fusion history included.', img:'images/southern-cross.jpg'},
+    {name:'Dimes X', spec:'Original design', desc:'Dimes X full instrument file.', img:'images/dimes-x.jpg'},
+    {name:'Stealth', spec:'W-style · Scale 24.75" · Set neck · History incl.', desc:'Made after the W Stealth. 24.75" scale, set neck. Fusion history included.', img:'images/stealth.jpg'},
+    {name:'Baritone Stealth', spec:'Scale 27" · Set neck · History incl.', desc:'W Stealth in baritone. 27" scale, set neck. Fusion history included.', img:'images/baritone-stealth.jpg'},
+    {name:'Kelly Fighter', spec:'Jackson-style', desc:'Kelly Fighter Jackson inspired full instrument.', img:'images/kelly-fighter.jpg'},
+    {name:'Fighter', spec:'Original design', desc:'Fighter original design full instrument.', img:'images/fighter.jpg'},
+    {name:'Andy Oads', spec:'Original design', desc:'Andy Oads original design full instrument.', img:'images/andy-oads.jpg'},
+    {name:'Emperor B', spec:'Original design', desc:'Emperor B original design full instrument.', img:'images/emperor-b.jpg'},
+    {name:'Dinky DK Style', spec:'Scale 25.5" · 24 frets', desc:'Dinky meets DK full instrument. 25.5" scale, 24 frets.', img:'images/dinky-dk.jpg'},
+    {name:'540piii', spec:'Ibanez 540 inspired', desc:'540piii full instrument file.', img:'images/540piii.jpg'},
+    {name:'540p VAI', spec:'Steve Vai variant', desc:'540p VAI Steve Vai inspired full instrument.', img:'images/540p-vai.jpg'},
+    {name:'Medussa', spec:'Original design', desc:'Medussa original design full instrument.', img:'images/medussa.jpg'},
+    {name:'Warlock Style', spec:'BC Rich inspired · 24.75" neck-thru', desc:'BC Rich Warlock inspired. 24.75" scale, neck-thru design.', img:'images/warlock.jpg'},
+    {name:'Bich!!', spec:'BC Rich inspired · 24.75" neck-thru · History incl.', desc:'BC Rich Bich inspired. 24.75" scale, neck-thru. Fusion history included.', img:'images/bich.jpg'},
+    {name:'Victorynox', spec:'BC Rich variant', desc:'Victorynox BC Rich inspired full instrument.', img:'images/victorynox.jpg'},
+    {name:'X Bich', spec:'BC Rich variant', desc:'X Bich variant full instrument.', img:'images/x-bich.jpg'},
+    {name:'Iron Eagle', spec:'Original design', desc:'Iron Eagle original design full instrument.', img:'images/iron-eagle.jpg'},
+    {name:'X Rays', spec:'Original design', desc:'X Rays original design full instrument.', img:'images/x-rays.jpg'},
+    {name:'Tiger', spec:'Original design', desc:'Tiger original design full instrument.', img:'images/tiger.jpg'},
+    {name:'Chernobyl Tiger', spec:'Original design', desc:'Chernobyl Tiger original design full instrument.', img:'images/chernobyl-tiger.jpg'},
+    {name:'WASP', spec:'Original design', desc:'WASP original design full instrument.', img:'images/wasp.jpg'},
+    {name:'Cyber Punk 77', spec:'Original futuristic design', desc:'Cyber Punk 77 — original futuristic design full instrument.', img:'images/cyber-punk-77.jpg'},
+    {name:'7 Rhoads', spec:'7-string Randy Rhoads style', desc:'7 Rhoads, 7-string Randy Rhoads inspired.', img:'images/7-rhoads.jpg'},
+    {name:'7 Kelly Fighter', spec:'7-string Kelly style', desc:'7 Kelly Fighter, 7-string version.', img:'images/7-kelly-fighter.jpg'},
+    {name:'XIPHIOS', spec:'Original design', desc:'XIPHIOS original design full instrument.', img:'images/xiphios.jpg'},
+    {name:'Mii — Full', spec:'Original design', desc:'Mii full instrument file.', img:'images/mii-full.jpg'},
+    {name:'Sex and Warfare', spec:'Original design', desc:'Sex and Warfare original design.', img:'images/sex-and-warfare.jpg'},
+    {name:'Sevilla 92', spec:'Original design', desc:'Sevilla 92 original design full instrument.', img:'images/sevilla-92.jpg'},
+    {name:'Martins Dream', spec:'Tribute design', desc:"Martin's Dream tribute design full instrument.", img:'images/martins-dream.jpg'},
+    {name:'1987 GEM', spec:'Tribute design', desc:'1987 GEM tribute design full instrument.', img:'images/1987-gem.jpg'},
+    {name:'CIA — Full', spec:'Original design', desc:'CIA full instrument file.', img:'images/cia-full.jpg'},
+    {name:'Pero Juguetona — FREE 🎸', spec:'Mikro · Scale 22.2" · Free download', desc:'Short scale Mikro guitar. Scale 22.2". This model is completely FREE — download and try it on your CNC!', img:'images/mikro-free.jpg', badge:'FREE', freeLink:'https://www.mediafire.com/file/7od2yrb88o739ym/MIKRO_v30.rar/file'},
+    {name:'Reb Red', spec:'Original design', desc:'Reb Red original design full instrument.', img:'images/reb-red.jpg'},
+    {name:'Aceituna', spec:'Original design', desc:'Aceituna original design full instrument.', img:'images/aceituna.jpg'},
+    {name:'Fear in the Space', spec:'Original design', desc:'Fear in the Space original design.', img:'images/fear-in-space.jpg'},
+    {name:'Kikos Style', spec:'Original design', desc:'Kikos Style full instrument.', img:'images/kikos.jpg'},
+    {name:'Teemu Style', spec:'Original design', desc:'Teemu Style full instrument.', img:'images/teemu.jpg'},
+    {name:'Joes', spec:'Original design', desc:'Joes original design full instrument.', img:'images/joes.jpg'},
+    {name:'Sable', spec:'Original design', desc:'Sable original design full instrument.', img:'images/sable.jpg'},
+    {name:'Fear in 7 Space', spec:'7-string variant', desc:'Fear in 7 Space, 7-string version.', img:'images/fear-7-space.jpg'},
+    {name:'Old School', spec:'Original design', desc:'Old School original design full instrument.', img:'images/old-school.jpg'},
+    {name:'New School', spec:'Original design', desc:'New School original design full instrument.', img:'images/new-school.jpg'},
+    {name:'Khaller', spec:'Original design', desc:'Khaller original design full instrument.', img:'images/khaller.jpg'},
+    {name:'Cia 7 — Full', spec:'7-string original design', desc:'CIA 7-string full instrument file.', img:'images/cia-7-full.jpg'},
+    {name:'Cool RG Design', spec:'Original design', desc:'Cool RG Design original full instrument.', img:'images/cool-rg.jpg'},
+    {name:'Stephen Carpenter Style', spec:'8-string inspired', desc:'Stephen Carpenter style 8-string inspired design.', img:'images/stephen-carpenter.jpg'},
+    {name:'Ugly', spec:'Experimental original', desc:'Ugly experimental original design.', img:'images/ugly.jpg'},
+    {name:'Still Ugly', spec:'Experimental original', desc:'Still Ugly experimental original design.', img:'images/still-ugly.jpg'},
+    {name:'WTF?', spec:'Experimental original', desc:'WTF? experimental original design.', img:'images/wtf.jpg'},
+    {name:'42 Frets', spec:'Extended range · Experimental', desc:'42 fret experimental extended range instrument.', img:'images/42-frets.jpg'},
+  ],
+  bass: [
+    {name:'Majesty Bass', spec:'34" scale', desc:'Music Man Majesty style bass. 34" scale full instrument.', img:'images/bass-majesty.jpg'},
+    {name:'McCartney Style Bass', spec:'30" scale · Short scale', desc:'Paul McCartney violin bass inspired. 30" short scale.', img:'images/bass-mccartney.jpg'},
+    {name:'Press Bass', spec:'Scale 24.75" · 22 frets', desc:'Press bass full instrument file.', img:'images/bass-press.jpg'},
+    {name:'Iron Bass', spec:'Original design', desc:'Iron bass original design full instrument.', img:'images/bass-iron.jpg'},
+    {name:'War Bass', spec:'Original design', desc:'War bass original design full instrument.', img:'images/bass-war.jpg'},
+  ]
+};
+
+function makeCard(m) {
+  const badge = m.badge ? `<div class="model-badge ${m.badge==='FREE'?'model-free-badge':''}">${m.badge}</div>` : '';
+  const freeLink = m.freeLink || '';
+  return `<div class="model-card" onclick="openModal(${JSON.stringify(m.name)},${JSON.stringify(m.spec)},${JSON.stringify(m.desc)},${JSON.stringify(m.img)},${JSON.stringify(m.badge||'')},${JSON.stringify(freeLink)})">
+    ${badge}
+    <div class="model-img-wrap"><img class="model-img" src="${m.img}" alt="${m.name}" loading="lazy"></div>
+    <div class="model-info"><div class="model-name">${m.name}</div><div class="model-spec">${m.spec}</div></div>
+  </div>`;
+}
+
+document.getElementById('grid-bodies').innerHTML = MODELS.bodies.map(makeCard).join('');
+document.getElementById('grid-cam').innerHTML = MODELS.cam.map(makeCard).join('');
+document.getElementById('grid-inlays').innerHTML = MODELS.inlays.map(makeCard).join('');
+document.getElementById('grid-full').innerHTML = MODELS.full.map(makeCard).join('');
+document.getElementById('grid-bass').innerHTML = MODELS.bass.map(makeCard).join('');
+
+function openModal(name, spec, desc, img, badge, freeLink) {
+  document.getElementById('modal-name').textContent = name;
+  document.getElementById('modal-spec').textContent = spec;
+  document.getElementById('modal-desc').textContent = desc;
+  document.getElementById('modal-img').src = img;
+  document.getElementById('modal-img').alt = name;
+  const actions = document.getElementById('modal-actions');
+  if (badge === 'FREE') {
+    actions.innerHTML = `<a href="${freeLink}" target="_blank" class="btn-free">⬇ Download Free</a><a href="https://www.facebook.com/GUITARMODELINGFORCNC" target="_blank" class="btn-secondary">Questions? Facebook</a>`;
+  } else {
+    actions.innerHTML = `<a href="https://paypal.me/guitarsresourses" target="_blank" class="btn-paypal">💳 Buy via PayPal</a><a href="https://www.facebook.com/GUITARMODELINGFORCNC" target="_blank" class="btn-secondary">Message on Facebook</a>`;
+  }
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; }
+function closeOnOverlay(e) { if (e.target === document.getElementById('modal')) closeModal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
 </body>
 </html>
