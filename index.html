@@ -353,21 +353,34 @@ const MODELS = {
   ]
 };
 
-function makeCard(m) {
+function makeCard(m, category, index) {
   const badge = m.badge ? `<div class="model-badge ${m.badge==='FREE'?'model-free-badge':''}">${m.badge}</div>` : '';
-  const freeLink = m.freeLink || '';
-  return `<div class="model-card" onclick="openModal(${JSON.stringify(m.name)},${JSON.stringify(m.spec)},${JSON.stringify(m.desc)},${JSON.stringify(m.img)},${JSON.stringify(m.badge||'')},${JSON.stringify(freeLink)})">
+  return `<div class="model-card" data-cat="${category}" data-idx="${index}">
     ${badge}
     <div class="model-img-wrap"><img class="model-img" src="${m.img}" alt="${m.name}" loading="lazy"></div>
     <div class="model-info"><div class="model-name">${m.name}</div><div class="model-spec">${m.spec}</div></div>
   </div>`;
 }
 
-document.getElementById('grid-bodies').innerHTML = MODELS.bodies.map(makeCard).join('');
-document.getElementById('grid-cam').innerHTML = MODELS.cam.map(makeCard).join('');
-document.getElementById('grid-inlays').innerHTML = MODELS.inlays.map(makeCard).join('');
-document.getElementById('grid-full').innerHTML = MODELS.full.map(makeCard).join('');
-document.getElementById('grid-bass').innerHTML = MODELS.bass.map(makeCard).join('');
+function renderGrid(id, category) {
+  document.getElementById(id).innerHTML = MODELS[category].map((m,i) => makeCard(m, category, i)).join('');
+}
+renderGrid('grid-bodies','bodies');
+renderGrid('grid-cam','cam');
+renderGrid('grid-inlays','inlays');
+renderGrid('grid-full','full');
+renderGrid('grid-bass','bass');
+
+// Event delegation — un solo listener para todos los cards
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.model-card');
+  if (!card) return;
+  const cat = card.dataset.cat;
+  const idx = parseInt(card.dataset.idx);
+  const m = MODELS[cat][idx];
+  if (!m) return;
+  openModal(m.name, m.spec, m.desc, m.img, m.badge||'', m.freeLink||'');
+});
 
 function openModal(name, spec, desc, img, badge, freeLink) {
   document.getElementById('modal-name').textContent = name;
